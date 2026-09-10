@@ -8,19 +8,18 @@
 
 Everything that must exist before any feature code runs.
 
-- [ ] **Docker Compose for Neo4j**
-  - [ ] Create `docker-compose.yml` at project root
-  - [ ] Configure Neo4j Community container (ports `7474` / `7687`)
-  - [ ] Set initial password, enable `apoc` plugin if needed
-  - [ ] Add volume for persistent data
-- [ ] **Mock Seed Script (Day 1 Testing)**
-  - [ ] Create `scripts/seed.cypher` or `pipeline/seed_graph.py`
-  - [ ] Seed a 10–15 node mock dependency graph with 1 vulnerability for instant UI testing
-- [ ] **Root `README.md`**
-  - [ ] Project overview, screenshot placeholder
-  - [ ] Prerequisites (Python 3.12+, Docker)
-  - [ ] Quick-start instructions (`docker compose up`, `cd backend && pip install -r requirements.txt`, `uvicorn app.main:app`)
-  - [ ] Links to `docs/` guides
+- [x] **Docker Compose for Neo4j**
+  - [x] Create `docker-compose.yml` at project root
+  - [x] Configure Neo4j Community container (ports `7474` / `7687`)
+  - [x] Set initial password, enable `apoc` plugin if needed
+  - [x] Add volume for persistent data
+- [x] **Mock Seed Script (Day 1 Testing)**
+  - [x] Create `scripts/seed.cypher` or `pipeline/seed_graph.py`
+  - [x] Seed a 10–15 node mock dependency graph with 1 vulnerability for instant UI testing
+- [x] **Root `README.md`**
+  - [x] Project overview
+  - [x] Prerequisites (Python 3.12+, Docker)
+  - [x] Quick-start instructions (`docker compose up`, `cd backend && pip install -r requirements.txt`, `uvicorn app.main:app`)
 
 ---
 
@@ -29,15 +28,15 @@ Everything that must exist before any feature code runs.
 Build out the AI microservice.
 
 ### 2a. Core AI endpoints
-- [ ] **`POST /ai/search`** — main search endpoint
-  - [ ] Accept `{ prompt: str }`
-  - [ ] Use LangChain `GraphCypherQAChain` to translate NL → Cypher
-  - [ ] Validate returned Cypher is read-only (`MATCH`, `RETURN` only)
-  - [ ] Execute Cypher against Neo4j (parameterized)
-  - [ ] Use LLM to synthesize explanation of the sub-graph
-  - [ ] Return `{ success, graphData: { nodes, links }, explanation }`
-- [ ] **`GET /ai/graph/subgraph`** — fetch neighborhood of a package node
-- [ ] **`GET /ai/vulnerabilities/:id`** — fetch CVE/OSV detail + affected packages
+- [x] **`POST /ai/search`** — main search endpoint
+  - [x] Accept `{ prompt: str }`
+  - [x] Use LangChain `GraphCypherQAChain` to translate NL → Cypher
+  - [x] Validate returned Cypher is read-only (`MATCH`, `RETURN` only)
+  - [x] Execute Cypher against Neo4j (parameterized)
+  - [x] Use LLM to synthesize explanation of the sub-graph
+  - [x] Return `{ success, graphData: { nodes, links }, explanation }`
+- [x] **`GET /ai/graph/subgraph`** — fetch neighborhood of a package node
+- [x] **`GET /ai/vulnerabilities/:id`** — fetch CVE/OSV detail + affected packages
 
 ### 2b. Services & middleware
 - [ ] `services/cypher_generator.py` — LangChain GraphCypherQAChain via Groq

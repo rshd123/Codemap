@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from app.models.schemas import (
     CypherRequest,
     CypherResponse,
@@ -107,3 +107,64 @@ async def search(req: SearchRequest):
         graphData=graph_data,
         explanation=explanation,
     )
+
+
+@router.get("/graph/subgraph")
+async def get_subgraph(packageName: str = Query(..., description="Package name to explore")):
+    """Fetch the neighborhood of a package node (1-hop relationships)."""
+    cypher = """
+    MATCH (p:Package {name: $name})-[r]-(neighbor)
+    RETURN p, r, neighbor
+    LIMIT 50
+    """
+    records = await run_cypher(cypher, {"name": packageName})
+
+    nodes_map: dict[str, dict] = {}
+    links: list[dict] = []
+
+    for record in records:
+        for key, value in record.items():
+            if isinstance(value, dict):
+                node_id = str(value.get("elementId", value.get("identity", id(value))))
+                if node_id not in nodes_map:
+                    labels = value.get("labels", value.get("elementId", ""))
+                    props = value.get("properties", value)
+                    node_label = labels[0] if isinstance(labels, list) and labels else str(labels)
+                    nodes_map[node_id] = {"id": node_id, "label": node_label, **props}
+                if "type" in value:
+                    src = str(value.get("startNodeElementId", value.get("start", "")))
+                    tgt = str(value.get("endNodeElementId", value.get("end", "")))
+                    links.append({"source": src, "target": tgt, "type": value.get("type", "UNKNOWN")})
+
+    return {"nodes": list(nodes_map.values()), "links": links}
+
+
+@router.get("/vulnerabilities/{vuln_id}")
+async def get_vulnerability(vuln_id: str):
+    """Fetch CVE/OSV detail and all affected packages."""
+    cypher = """
+    MATCH (v:Vulnerability {id: $vuln_id})-[:AFFECTS]->(p:Package)
+    RETURN v, collect(p) AS affected_packages
+    """
+    records = await run_cypher(cypher, {"vuln_id": vuln_id})
+
+    if not records:
+        raise HTTPException(status_code=404, detail=f"Vulnerability {vuln_id} not found")
+
+    record = records[0]
+    vuln_node = record["v"]
+    affected = record["affected_packages"]
+
+    vuln_id_res = str(vuln_node.get("elementId", vuln_node.get("identity", "")))
+    vuln_props = vuln_node.get("properties", vuln_node)
+
+    nodes = [{"id": vuln_id_res, "label": "Vulnerability", **vuln_props}]
+    links = []
+
+    for pkg in affected:
+        pkg_id = str(pkg.get("elementId", pkg.get("identity", "")))
+        pkg_props = pkg.get("properties", pkg)
+        nodes.append({"id": pkg_id, "label": "Package", **pkg_props})
+        links.append({"source": vuln_id_res, "target": pkg_id, "type": "AFFECTS"})
+
+    return {"vulnerability": vuln_props, "affected_packages": [n for n in nodes if n["label"] == "Package"], "graphData": {"nodes": nodes, "links": links}}
