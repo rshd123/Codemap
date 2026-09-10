@@ -155,6 +155,3 @@ codemap/
 
 ---
 
-## License
-
-MIT
