@@ -110,7 +110,7 @@ async def search(req: SearchRequest):
 
 
 @router.get("/graph/subgraph")
-async def get_subgraph(packageName: str = Query(..., description="Package name to explore")):
+async def get_subgraph(packageName: str = Query(..., min_length=1, max_length=200, description="Package name to explore")):
     """Fetch the neighborhood of a package node (1-hop relationships)."""
     cypher = """
     MATCH (p:Package {name: $name})-[r]-(neighbor)
@@ -142,6 +142,9 @@ async def get_subgraph(packageName: str = Query(..., description="Package name t
 @router.get("/vulnerabilities/{vuln_id}")
 async def get_vulnerability(vuln_id: str):
     """Fetch CVE/OSV detail and all affected packages."""
+    if not vuln_id or len(vuln_id) > 100:
+        raise HTTPException(status_code=400, detail="Invalid vulnerability ID")
+
     cypher = """
     MATCH (v:Vulnerability {id: $vuln_id})-[:AFFECTS]->(p:Package)
     RETURN v, collect(p) AS affected_packages

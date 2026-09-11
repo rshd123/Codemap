@@ -39,15 +39,15 @@ Build out the AI microservice.
 - [x] **`GET /ai/vulnerabilities/:id`** — fetch CVE/OSV detail + affected packages
 
 ### 2b. Services & middleware
-- [ ] `services/cypher_generator.py` — LangChain GraphCypherQAChain via Groq
-- [ ] `services/evidence_synthesizer.py` — explanation generation
-- [ ] `services/neo4j_connection.py` — async Neo4j driver, `run_cypher`, read-only enforcement
-- [ ] Input validation on all routes
-- [ ] Global error handling middleware
+- [x] `services/cypher_generator.py` — LangChain GraphCypherQAChain via Groq
+- [x] `services/evidence_synthesizer.py` — explanation generation
+- [x] `services/neo4j_connection.py` — async Neo4j driver, `run_cypher`, read-only enforcement
+- [x] Input validation on all routes
+- [x] Global error handling middleware
 
 ### 2c. Dependencies
-- [ ] Verify `requirements.txt` has all needed packages
-- [ ] Add `python-dotenv` if not present
+- [x] Verify `requirements.txt` has all needed packages
+- [x] Add `python-dotenv` if not present
 
 ---
 

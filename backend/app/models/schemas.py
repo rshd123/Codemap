@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CypherRequest(BaseModel):
-    prompt: str
+    prompt: str = Field(..., min_length=1, max_length=2000, description="Natural language query")
 
 
 class CypherResponse(BaseModel):
@@ -11,8 +11,8 @@ class CypherResponse(BaseModel):
 
 
 class ExplainRequest(BaseModel):
-    prompt: str
-    cypher: str
+    prompt: str = Field(..., min_length=1, max_length=2000)
+    cypher: str = Field(..., min_length=1, max_length=5000)
     graphData: dict
 
 
@@ -21,7 +21,7 @@ class ExplainResponse(BaseModel):
 
 
 class SearchRequest(BaseModel):
-    prompt: str
+    prompt: str = Field(..., min_length=1, max_length=2000, description="Natural language query")
 
 
 class SearchResponse(BaseModel):
