@@ -13,6 +13,10 @@ Everything that must exist before any feature code runs.
   - [x] Configure Neo4j Community container (ports `7474` / `7687`)
   - [x] Set initial password, enable `apoc` plugin if needed
   - [x] Add volume for persistent data
+- [x] **Docker Compose for backend (hot reload)**
+  - [x] Add `backend` service (build `./backend`, port `8000`)
+  - [x] Bind-mount `./backend` + `uvicorn --reload` for live code updates (no rebuild)
+  - [x] Point `NEO4J_URI` at `bolt://neo4j:7687`, start after Neo4j is healthy
 - [x] **Mock Seed Script (Day 1 Testing)**
   - [x] Create `scripts/seed.cypher` or `pipeline/seed_graph.py`
   - [x] Seed a 10–15 node mock dependency graph with 1 vulnerability for instant UI testing
