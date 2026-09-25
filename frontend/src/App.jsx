@@ -19,9 +19,9 @@ function Header() {
     <header className="sticky top-0 z-30 border-b border-navy-700 bg-navy-950/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-flame-500 text-xs font-bold text-navy-950">
-            CM
-          </span>
+          {/* <span>
+            <img src="/public/logo.png" alt="image" />
+          </span> */}
           <span className="text-lg font-bold tracking-tight text-white">
             Code<span className="text-flame-500">Map</span>
           </span>
