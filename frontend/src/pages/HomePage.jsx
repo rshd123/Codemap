@@ -17,6 +17,21 @@ const FEATURES = [
     body: 'Every answer ships with the exact Cypher query and a generated explanation.',
     to: '/search',
   },
+  {
+    title: 'Dependency Explorer',
+    body: 'Walk transitive DEPENDS_ON edges with depth, ecosystem and direct-only controls.',
+    to: '/dependencies',
+  },
+  {
+    title: 'Ingestion Console',
+    body: 'Pull GitHub, OSV.dev, NVD and manifest data into the graph and watch it land.',
+    to: '/ingest',
+  },
+  {
+    title: 'Cypher Lab',
+    body: 'Run the prompt → Cypher → explanation pipeline one step at a time.',
+    to: '/cypher',
+  },
 ]
 
 export default function HomePage() {
@@ -57,7 +72,7 @@ export default function HomePage() {
         ))}
       </div>
 
-      <div className="mt-16 grid w-full gap-6 sm:grid-cols-3">
+      <div className="mt-16 grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {FEATURES.map((f) => (
           <Link
             key={f.title}

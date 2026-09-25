@@ -2,6 +2,9 @@ import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import GraphPage from './pages/GraphPage'
 import VulnPage from './pages/VulnPage'
+import DependenciesPage from './pages/DependenciesPage'
+import IngestPage from './pages/IngestPage'
+import CypherPage from './pages/CypherPage'
 import useHealth from './hooks/useHealth'
 
 const STATUS_STYLES = {
@@ -44,6 +47,30 @@ function Header() {
           >
             Search
           </Link>
+          <Link
+            to="/dependencies"
+            className={`transition hover:text-flame-400 ${
+              location.pathname.startsWith('/dependencies') ? 'text-flame-400' : 'text-slate-400'
+            }`}
+          >
+            Explore
+          </Link>
+          <Link
+            to="/ingest"
+            className={`transition hover:text-flame-400 ${
+              location.pathname.startsWith('/ingest') ? 'text-flame-400' : 'text-slate-400'
+            }`}
+          >
+            Ingest
+          </Link>
+          <Link
+            to="/cypher"
+            className={`transition hover:text-flame-400 ${
+              location.pathname.startsWith('/cypher') ? 'text-flame-400' : 'text-slate-400'
+            }`}
+          >
+            Cypher
+          </Link>
           <span
             className="flex items-center gap-1.5 text-xs text-slate-500"
             title={`API: ${status}`}
@@ -67,6 +94,10 @@ export default function App() {
           <Route path="/search" element={<GraphPage />} />
           <Route path="/graph/:id" element={<GraphPage />} />
           <Route path="/vulnerability/:id" element={<VulnPage />} />
+          <Route path="/dependencies" element={<DependenciesPage />} />
+          <Route path="/dependencies/:name" element={<DependenciesPage />} />
+          <Route path="/ingest" element={<IngestPage />} />
+          <Route path="/cypher" element={<CypherPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

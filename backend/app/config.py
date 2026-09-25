@@ -8,6 +8,12 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_model: str = "llama-3.3-70b-versatile"
 
+    github_api_url: str = "https://api.github.com"
+    github_token: str = ""
+    osv_api_url: str = "https://api.osv.dev"
+    nvd_api_url: str = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    nvd_api_key: str = ""
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 

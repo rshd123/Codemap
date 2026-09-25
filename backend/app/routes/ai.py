@@ -9,6 +9,7 @@ from app.models.schemas import (
 )
 from app.services.cypher_generator import generate_cypher
 from app.services.evidence_synthesizer import explain_evidence
+from app.services.graph_serializer import to_graph_data
 from app.services.neo4j_connection import run_cypher
 
 router = APIRouter(prefix="/ai", tags=["ai"])
@@ -54,49 +55,7 @@ async def search(req: SearchRequest):
     records = await run_cypher(cypher, params)
 
     # Step 3: Build graph data (nodes + links)
-    nodes_map: dict[str, dict] = {}
-    links: list[dict] = []
-
-    for record in records:
-        for key, value in record.items():
-            if isinstance(value, dict):
-                node_id = str(value.get("elementId", value.get("identity", id(value))))
-                if node_id not in nodes_map:
-                    labels = value.get("labels", value.get("elementId", ""))
-                    props = value.get("properties", value)
-                    node_label = labels[0] if isinstance(labels, list) and labels else str(labels)
-                    nodes_map[node_id] = {
-                        "id": node_id,
-                        "label": node_label,
-                        **props,
-                    }
-            elif isinstance(value, list):
-                for item in value:
-                    if isinstance(item, dict):
-                        node_id = str(item.get("elementId", item.get("identity", id(item))))
-                        if node_id not in nodes_map:
-                            labels = item.get("labels", item.get("elementId", ""))
-                            props = item.get("properties", item)
-                            node_label = labels[0] if isinstance(labels, list) and labels else str(labels)
-                            nodes_map[node_id] = {
-                                "id": node_id,
-                                "label": node_label,
-                                **props,
-                            }
-
-    # Extract relationships from records
-    for record in records:
-        for key, value in record.items():
-            if isinstance(value, dict) and "type" in value:
-                src = str(value.get("startNodeElementId", value.get("start", "")))
-                tgt = str(value.get("endNodeElementId", value.get("end", "")))
-                links.append({
-                    "source": src,
-                    "target": tgt,
-                    "type": value.get("type", "UNKNOWN"),
-                })
-
-    graph_data = {"nodes": list(nodes_map.values()), "links": links}
+    graph_data = to_graph_data(records)
 
     # Step 4: Generate explanation
     explanation = await explain_evidence(req.prompt, cypher, graph_data)
@@ -119,24 +78,7 @@ async def get_subgraph(packageName: str = Query(..., min_length=1, max_length=20
     """
     records = await run_cypher(cypher, {"name": packageName})
 
-    nodes_map: dict[str, dict] = {}
-    links: list[dict] = []
-
-    for record in records:
-        for key, value in record.items():
-            if isinstance(value, dict):
-                node_id = str(value.get("elementId", value.get("identity", id(value))))
-                if node_id not in nodes_map:
-                    labels = value.get("labels", value.get("elementId", ""))
-                    props = value.get("properties", value)
-                    node_label = labels[0] if isinstance(labels, list) and labels else str(labels)
-                    nodes_map[node_id] = {"id": node_id, "label": node_label, **props}
-                if "type" in value:
-                    src = str(value.get("startNodeElementId", value.get("start", "")))
-                    tgt = str(value.get("endNodeElementId", value.get("end", "")))
-                    links.append({"source": src, "target": tgt, "type": value.get("type", "UNKNOWN")})
-
-    return {"nodes": list(nodes_map.values()), "links": links}
+    return to_graph_data(records)
 
 
 @router.get("/vulnerabilities/{vuln_id}")
@@ -146,28 +88,25 @@ async def get_vulnerability(vuln_id: str):
         raise HTTPException(status_code=400, detail="Invalid vulnerability ID")
 
     cypher = """
-    MATCH (v:Vulnerability {id: $vuln_id})-[:AFFECTS]->(p:Package)
-    RETURN v, collect(p) AS affected_packages
+    MATCH (v:Vulnerability {id: $vuln_id})
+    OPTIONAL MATCH (v)-[r:AFFECTS]->(p:Package)
+    RETURN v, r, p
+    LIMIT 200
     """
     records = await run_cypher(cypher, {"vuln_id": vuln_id})
 
     if not records:
         raise HTTPException(status_code=404, detail=f"Vulnerability {vuln_id} not found")
 
-    record = records[0]
-    vuln_node = record["v"]
-    affected = record["affected_packages"]
+    graph = to_graph_data(records)
+    vuln_props = next((node for node in graph["nodes"] if node.get("label") == "Vulnerability"), None)
+    if vuln_props is None:
+        raise HTTPException(status_code=404, detail=f"Vulnerability {vuln_id} not found")
 
-    vuln_id_res = str(vuln_node.get("elementId", vuln_node.get("identity", "")))
-    vuln_props = vuln_node.get("properties", vuln_node)
+    affected = [node for node in graph["nodes"] if node.get("label") == "Package"]
 
-    nodes = [{"id": vuln_id_res, "label": "Vulnerability", **vuln_props}]
-    links = []
-
-    for pkg in affected:
-        pkg_id = str(pkg.get("elementId", pkg.get("identity", "")))
-        pkg_props = pkg.get("properties", pkg)
-        nodes.append({"id": pkg_id, "label": "Package", **pkg_props})
-        links.append({"source": vuln_id_res, "target": pkg_id, "type": "AFFECTS"})
-
-    return {"vulnerability": vuln_props, "affected_packages": [n for n in nodes if n["label"] == "Package"], "graphData": {"nodes": nodes, "links": links}}
+    return {
+        "vulnerability": vuln_props,
+        "affected_packages": affected,
+        "graphData": graph,
+    }

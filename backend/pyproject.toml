@@ -19,6 +19,7 @@ dependencies = [
 
 [project.scripts]
 codemap-ai = "app.main:run"
+codemap-etl = "app.pipeline.cli:main"
 
 [build-system]
 requires = ["setuptools>=75"]

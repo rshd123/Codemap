@@ -5,9 +5,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from app.services.neo4j_connection import close_driver
-from app.routes import health, ai
+from app.routes import ai, graph, health, ingest
 
 load_dotenv()
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)-7s %(name)s: %(message)s",
+)
+logging.getLogger("neo4j").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +41,8 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(ai.router)
+app.include_router(graph.router)
+app.include_router(ingest.router)
 
 
 @app.exception_handler(Exception)

@@ -41,5 +41,8 @@ async def explain_evidence(prompt: str, cypher: str, graph_data: dict) -> str:
         graph_data_json=graph_data_json,
     )
 
-    response = await llm.ainvoke(formatted)
+    try:
+        response = await llm.ainvoke(formatted)
+    except Exception as exc:
+        raise ValueError(f"LLM request failed: {str(exc)[:400]}") from exc
     return response.content

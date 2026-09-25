@@ -30,6 +30,24 @@ async def run_cypher(query: str, params: dict | None = None) -> list[dict]:
         return records
 
 
+async def run_write(query: str, params: dict | None = None) -> tuple[list[dict], object]:
+    """Run a write transaction and return (records, counters).
+
+    Only the ingestion pipeline may call this; user-facing search traffic must
+    stay on run_cypher so generated queries remain read-only.
+    """
+    driver = await get_driver()
+
+    async def _work(tx):
+        result = await tx.run(query, params or {})
+        records = [dict(record) async for record in result]
+        summary = await result.consume()
+        return records, summary.counters
+
+    async with driver.session(database="neo4j") as session:
+        return await session.execute_write(_work)
+
+
 def is_read_only(cypher: str) -> bool:
     """Basic check that a Cypher query only contains read operations."""
     forbidden = [

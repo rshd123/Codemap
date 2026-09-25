@@ -46,11 +46,19 @@ async def generate_cypher(prompt: str) -> dict:
         llm=llm,
         graph=graph,
         verbose=True,
-        allow_dangerous_requests=False,
+        allow_dangerous_requests=True,
         top_k=100,
     )
 
-    result = await chain.ainvoke({"query": prompt})
+    try:
+        result = await chain.ainvoke({"query": prompt})
+    except Exception as exc:
+        return {
+            "cypher": "",
+            "params": {},
+            "error": f"LLM request failed: {str(exc)[:400]}",
+        }
+
     cypher = result.get("cypher", "")
 
     if not cypher:

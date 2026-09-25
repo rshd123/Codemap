@@ -102,28 +102,28 @@ Replace the Vite template with a real CodeMap UI.
 Populate the graph with real-world data.
 
 ### 4a. ETL scripts (inside `backend/app/pipeline/`)
-- [ ] **GitHub ETL**
-  - [ ] Fetch repos, commits, issues via GitHub API
-  - [ ] Create `Package`, `Commit`, `Issue` nodes
-  - [ ] Create `FIXES`, `REFERENCES` relationships
-- [ ] **OSV.dev ETL**
-  - [ ] Fetch vulnerabilities from OSV API
-  - [ ] Create `Vulnerability` nodes
-  - [ ] Create `AFFECTS` relationships to affected packages
-- [ ] **NVD ETL**
-  - [ ] Fetch CVE data from NVD API
-  - [ ] Create/update `Vulnerability` nodes with CVSS scores
-  - [ ] Cross-reference with OSV data
+- [x] **GitHub ETL**
+  - [x] Fetch repos, commits, issues via GitHub API
+  - [x] Create `Package`, `Commit`, `Issue` nodes
+  - [x] Create `FIXES`, `REFERENCES` relationships
+- [x] **OSV.dev ETL**
+  - [x] Fetch vulnerabilities from OSV API
+  - [x] Create `Vulnerability` nodes
+  - [x] Create `AFFECTS` relationships to affected packages
+- [x] **NVD ETL**
+  - [x] Fetch CVE data from NVD API
+  - [x] Create/update `Vulnerability` nodes with CVSS scores
+  - [x] Cross-reference with OSV data
 
 ### 4b. Ingestion runner
-- [ ] CLI command or FastAPI endpoint to trigger ETL
-- [ ] Idempotent upserts (don't duplicate nodes on re-run)
-- [ ] Logging & progress reporting
+- [x] CLI command or FastAPI endpoint to trigger ETL
+- [x] Idempotent upserts (don't duplicate nodes on re-run)
+- [x] Logging & progress reporting
 
 ### 4c. Dependency graph
-- [ ] Parse `package.json`, `requirements.txt`, `pom.xml`, etc.
-- [ ] Create `DEPENDS_ON` relationships between packages
-- [ ] Support transitive dependency traversal
+- [x] Parse `package.json`, `requirements.txt`, `pom.xml`, etc.
+- [x] Create `DEPENDS_ON` relationships between packages
+- [x] Support transitive dependency traversal
 
 ---
 
@@ -139,6 +139,12 @@ Populate the graph with real-world data.
 - [ ] Add proper favicon for CodeMap
 - [ ] Responsive design for frontend
 - [ ] Dark mode support (optional)
+
+### 5c. Frontend API coverage
+- [x] `services/api.js` exposes every backend endpoint (AI, graph traversal, ETL)
+- [x] `/dependencies` explorer page wired to `GET /graph/dependencies` (depth, ecosystem, direct-only)
+- [x] `/ingest` console wired to `POST /etl/run`, `GET /etl/status`, `GET /etl/jobs/{jobId}` with status polling
+- [x] Node detail deep-links (Package → dependency tree, Vulnerability → detail, Issue/source → URL)
 
 ---
 
