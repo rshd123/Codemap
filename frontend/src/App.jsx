@@ -1,17 +1,78 @@
-import './index.css'
+import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import GraphPage from './pages/GraphPage'
+import VulnPage from './pages/VulnPage'
+import useHealth from './hooks/useHealth'
 
-function App() {
+const STATUS_STYLES = {
+  online: 'bg-green-500',
+  degraded: 'bg-yellow-500',
+  offline: 'bg-red-500',
+  checking: 'bg-slate-500',
+}
+
+function Header() {
+  const status = useHealth()
+  const location = useLocation()
+
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <header className="p-6 border-b border-gray-800">
-        <h1 className="text-2xl font-bold">CodeMap</h1>
-        <p className="text-gray-400 mt-1">Evidence-grounded software dependency graph</p>
-      </header>
-      <main className="p-6">
-        <p className="text-gray-500">UI coming soon. Start building in <code>src/pages/</code>.</p>
-      </main>
-    </div>
+    <header className="sticky top-0 z-30 border-b border-navy-700 bg-navy-950/90 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+        <Link to="/" className="flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-flame-500 text-xs font-bold text-navy-950">
+            CM
+          </span>
+          <span className="text-lg font-bold tracking-tight text-white">
+            Code<span className="text-flame-500">Map</span>
+          </span>
+        </Link>
+
+        <nav className="flex items-center gap-4 text-sm">
+          <Link
+            to="/"
+            className={`transition hover:text-flame-400 ${
+              location.pathname === '/' ? 'text-flame-400' : 'text-slate-400'
+            }`}
+          >
+            Home
+          </Link>
+          <Link
+            to="/search"
+            className={`transition hover:text-flame-400 ${
+              location.pathname.startsWith('/search') ? 'text-flame-400' : 'text-slate-400'
+            }`}
+          >
+            Search
+          </Link>
+          <span
+            className="flex items-center gap-1.5 text-xs text-slate-500"
+            title={`API: ${status}`}
+          >
+            <span className={`h-2 w-2 rounded-full ${STATUS_STYLES[status]}`} />
+            API
+          </span>
+        </nav>
+      </div>
+    </header>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/search" element={<GraphPage />} />
+          <Route path="/graph/:id" element={<GraphPage />} />
+          <Route path="/vulnerability/:id" element={<VulnPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <footer className="border-t border-navy-800 px-4 py-4 text-center text-xs text-slate-600">
+        CodeMap — evidence-grounded dependency intelligence
+      </footer>
+    </div>
+  )
+}

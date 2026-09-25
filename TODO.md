@@ -56,40 +56,40 @@ Build out the AI microservice.
 Replace the Vite template with a real CodeMap UI.
 
 ### 3a. Install dependencies & configure
-- [ ] `npm install react-force-graph react-router-dom axios`
-- [ ] `frontend/.env` — verify `VITE_API_URL=http://localhost:8000`
-- [ ] `index.html` — verify title is `"CodeMap"`
+- [x] `npm install react-force-graph react-router-dom axios`
+- [x] `frontend/.env` — verify `VITE_API_URL=http://localhost:8000`
+- [x] `index.html` — verify title is `"CodeMap"`
 
 ### 3b. Project structure
-- [ ] Create `src/components/`, `src/pages/`, `src/services/`, `src/hooks/`, `src/context/`
-- [ ] Delete template files: `App.css` (template styles), `assets/hero.png`, `assets/react.svg`, `assets/vite.svg`
+- [x] Create `src/components/`, `src/pages/`, `src/services/`, `src/hooks/`, `src/context/`
+- [x] Delete template files: `App.css` (template styles), `assets/hero.png`, `assets/react.svg`, `assets/vite.svg`
 
 ### 3c. API service layer
-- [ ] `src/services/api.js` — axios instance with `VITE_API_URL` base
-  - [ ] `search(prompt)` → `POST /ai/search`
-  - [ ] `getGraph(packageName)` → `GET /ai/graph/:packageName`
-  - [ ] `getVulnerability(id)` → `GET /ai/vulnerabilities/:id`
-  - [ ] `healthCheck()` → `GET /health`
+- [x] `src/services/api.js` — axios instance with `VITE_API_URL` base
+  - [x] `search(prompt)` → `POST /ai/search`
+  - [x] `getGraph(packageName)` → `GET /ai/graph/:packageName`
+  - [x] `getVulnerability(id)` → `GET /ai/vulnerabilities/:id`
+  - [x] `healthCheck()` → `GET /health`
 
 ### 3d. Pages & routing
-- [ ] `src/App.jsx` — React Router setup (`/`, `/search`, `/graph/:id`)
-- [ ] `src/pages/HomePage.jsx` — landing page with search bar
-- [ ] `src/pages/GraphPage.jsx` — force-graph visualization + evidence sidebar
-- [ ] `src/pages/VulnPage.jsx` — vulnerability detail view
+- [x] `src/App.jsx` — React Router setup (`/`, `/search`, `/graph/:id`)
+- [x] `src/pages/HomePage.jsx` — landing page with search bar
+- [x] `src/pages/GraphPage.jsx` — force-graph visualization + evidence sidebar
+- [x] `src/pages/VulnPage.jsx` — vulnerability detail view
 
 ### 3e. Core components
-- [ ] `SearchBar.jsx` — input field + submit, sends prompt to `/ai/search`
-- [ ] `GraphVisualization.jsx` — renders `react-force-graph` with nodes/links
-  - [ ] Node coloring by type (Package=blue, Vulnerability=red, Issue=yellow, Commit=green)
-  - [ ] Relationship labels on links
-  - [ ] Click-to-expand node detail
-- [ ] `EvidenceSidebar.jsx` — displays LLM-generated explanation
-- [ ] `NodeDetail.jsx` — popup/panel showing node properties
-- [ ] `LoadingSpinner.jsx` — loading state during search
+- [x] `SearchBar.jsx` — input field + submit, sends prompt to `/ai/search`
+- [x] `GraphVisualization.jsx` — renders `react-force-graph` with nodes/links
+  - [x] Node coloring by type (Package=blue, Vulnerability=red, Issue=yellow, Commit=green)
+  - [x] Relationship labels on links
+  - [x] Click-to-expand node detail
+- [x] `EvidenceSidebar.jsx` — displays LLM-generated explanation
+- [x] `NodeDetail.jsx` — popup/panel showing node properties
+- [x] `LoadingSpinner.jsx` — loading state during search
 
 ### 3f. State management
-- [ ] React Context or `useReducer` for search state
-  - [ ] `query`, `graphData`, `explanation`, `loading`, `error`
+- [x] React Context or `useReducer` for search state
+  - [x] `query`, `graphData`, `explanation`, `loading`, `error`
 
 ---
 

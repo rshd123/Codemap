@@ -17,6 +17,26 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    build: ./backend
+    container_name: codemap-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - NEO4J_URI=bolt://neo4j:7687
+    volumes:
+      # Live-mount source code so uvicorn --reload picks up changes instantly
+      - ./backend:/app
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+      --reload-dir /app
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
 volumes:
   neo4j_data:
   neo4j_logs:

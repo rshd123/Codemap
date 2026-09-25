@@ -25,3 +25,4 @@ Neo4j            Graph Database (Port 7687)
 - Keep Cypher queries read-only during user searches (`MATCH`, `RETURN`).
 - Never run frontend and backend servers — only the user will run those. Stop after making code changes.
 - All AI/Cypher logic lives in `backend/`. Do not duplicate it elsewhere.
+- Always update TODO.md once done with task
